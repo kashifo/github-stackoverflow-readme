@@ -10,7 +10,7 @@ function extractStats(html) {
   let silverBadges = detailsDiv.find("div.badge-silver").text().trim();
   let bronzeBadges = detailsDiv.find("div.badge-bronze").text().trim();
 
-  // If class names are not found or not reliable, use text content as a fallback
+  // If any badge count is missing, use fallback logic for missing badges only
   if (!goldBadges || !silverBadges || !bronzeBadges) {
     const badges = [];
     badgeDivs.each((i, el) => {
@@ -22,13 +22,13 @@ function extractStats(html) {
     });
 
     const userBadges = badges.reduce((acc, badge) => {
-      acc[badge.type] = badge.count || 0; // Default count to 0 if undefined
+      acc[badge.type] = badge.count || "0"; // Default count to "0" if undefined
       return acc;
     }, {});
 
-    goldBadges = userBadges.gold || "0";
-    silverBadges = userBadges.silver || "0";
-    bronzeBadges = userBadges.bronze || "0";
+    goldBadges = goldBadges || userBadges.gold || "0"; // Use the existing value or fallback
+    silverBadges = silverBadges || userBadges.silver || "0";
+    bronzeBadges = bronzeBadges || userBadges.bronze || "0";
   }
 
   return {
